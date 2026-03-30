@@ -11,7 +11,7 @@ import { Statistics } from '../models/Statistics.js';
 import { Incentivization } from '../models/Incentivization.js';
 import { calculateIncentivesForBatch } from '../utils/incentives.js';
 import csv from 'csv-parser';
-import fs from 'fs';
+import fs from 'fs'
 import bcrypt from 'bcryptjs';
 import sendEmail from '../utils/sendEmail.js';
 import extractUserIdFromQR from '../utils/extractUserIdFromQR.js';

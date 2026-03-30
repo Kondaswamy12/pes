@@ -58,21 +58,28 @@ export default function TeacherDashboard() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return navigate('/login');
+  const token = localStorage.getItem('token');
+  if (!token) return navigate('/login');
 
-    fetch('http://localhost:5000/api/auth/profile', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  fetch('http://localhost:5000/api/auth/profile', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data?._id) {
+        return navigate('/login');
+      }
+
+      if (data.role !== "teacher") {
+        return navigate('/unauthorized'); 
+      }
+
+      setUser(data);
     })
-      .then(res => res.json())
-      .then(data => {
-        if (data?._id) setUser(data);
-        else navigate('/login');
-      })
-      .catch(() => navigate('/login'));
-  }, [navigate]);
+    .catch(() => navigate('/login'));
+}, [navigate]);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {

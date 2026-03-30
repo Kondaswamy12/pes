@@ -16,32 +16,46 @@ const generateToken = (id, role) => {
 };
 
 const generateVerificationCode = () => {
-  return Math.floor(1000 + Math.random() * 9000).toString();
+  return crypto.randomInt(1000, 10000).toString();
 };
 
 const validatePassword = (password) => {
-  const minLength = 8;
-  const hasUppercase = /[A-Z]/.test(password);
-  const hasLowercase = /[a-z]/.test(password);
-  const hasNumber = /\d/.test(password);
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
   const errors = [];
-  
-  if (password.length < minLength) {
-    errors.push(`Password must be at least ${minLength} characters long`);
+
+  if (typeof password !== 'string') {
+    return { isValid: false, errors: ['Password must be a string'] };
   }
-  if (!hasUppercase) {
-    errors.push('Password must contain at least one uppercase letter');
+
+  if (password.length < 8) {
+    errors.push('Minimum 8 characters required');
   }
-  if (!hasLowercase) {
-    errors.push('Password must contain at least one lowercase letter');
+
+  if (password.length > 128) {
+    errors.push('Maximum 128 characters allowed');
   }
-  if (!hasNumber) {
-    errors.push('Password must contain at least one number');
+
+  if (!/[A-Z]/.test(password)) {
+    errors.push('At least one uppercase letter required');
   }
-  if (!hasSpecialChar) {
-    errors.push('Password must contain at least one special character');
+
+  if (!/[a-z]/.test(password)) {
+    errors.push('At least one lowercase letter required');
+  }
+
+  if (!/\d/.test(password)) {
+    errors.push('At least one number required');
+  }
+
+  if (!/[!@#$%^&*()[\]{}\-_=+\\|;:'",.<>/?`~]/.test(password)) {
+    errors.push('At least one special character required');
+  }
+
+  if (/\s/.test(password)) {
+    errors.push('No spaces allowed');
+  }
+
+  if (/(.)\1{2,}/.test(password)) {
+    errors.push('No repeated characters (e.g., aaa)');
   }
 
   return {
@@ -66,10 +80,38 @@ export const sendVerificationCode = async (req, res) => {
       });
     }
 
-    const emailIsValid = emailValidator.validate(email);
-    if (!emailIsValid) {
-      return res.status(400).json({ message: 'Please enter a valid email address.' });
-    }
+  const emailIsValid = (() => {
+  if (typeof email !== 'string') return false;
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  
+  if (normalizedEmail.length === 0 || normalizedEmail.length > 254) {
+    return false;
+  }
+
+  if (/\s/.test(normalizedEmail)) {
+    return false;
+  }
+
+
+  if (!emailValidator.validate(normalizedEmail)) {
+    return false;
+  }
+
+  const blockedDomains = ['tempmail.com', '10minutemail.com'];
+  const domain = normalizedEmail.split('@')[1];
+
+  if (blockedDomains.includes(domain)) {
+    return false;
+  }
+
+  return true;
+})();
+
+if (!emailIsValid) {
+  return res.status(400).json({ message: 'Please enter a valid email address.' });
+}
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {

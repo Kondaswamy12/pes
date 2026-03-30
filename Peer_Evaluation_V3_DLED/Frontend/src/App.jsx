@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import AdminDashboard from './pages/AdminDashboard'
 import TeacherDashboard from './pages/TeacherDashboard'
 import StudentDashboard from './pages/StudentDashboard'
+
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Homepage from './pages/Homepage'
@@ -14,13 +15,14 @@ import ResetPassword from './pages/ResetPassword'
 import ChangePassword from './pages/ChangePassword'
 import { useContext, useEffect } from 'react'
 import { AppContext } from './utils/AppContext'
+import UnAuthorized from './pages/UnAuthorized'
 
 function App() {
   const { refreshApp } = useContext(AppContext);
 
   useEffect(() => {
     if (refreshApp) {
-      window.location.reload(); // Refresh the app
+      window.location.reload(); 
       setRefreshApp(false);
     }
   }, [refreshApp]);
@@ -38,6 +40,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/unauthorized" element={<UnAuthorized />} />
       </Routes>
     </Router>
   );

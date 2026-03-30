@@ -9,17 +9,16 @@ import teachRoutes from "./routes/teachRoutes.js";
 import taRoutes from "./routes/taRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import { fileURLToPath } from "url";
+import { protect, adminOrTeacherOnly } from "./middleware/authMiddleware.js";
 
 dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
+  cors()
 );
 app.use(express.json());
 
@@ -29,7 +28,7 @@ const __dirname = path.dirname(__filename);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
-  res.send("API is running...");
+  res.send("API is running...  2");
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);

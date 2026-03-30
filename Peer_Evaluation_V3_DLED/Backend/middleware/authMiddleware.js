@@ -27,3 +27,19 @@ export const adminOrTeacherOnly = (req, res, next) => {
     .status(403)
     .json({ message: "Access denied. Admins or Teachers only." });
 };
+export const adminOnly = (req, res, next) => {
+  console.log("ADMIN CHECK HIT:", req.user?.role);
+
+  if (req.user.role === "admin") return next();
+
+  return res.status(403).json({ message: "Admin only access" });
+};
+export const teacherOnly = (req, res, next) => {
+  if (req.user.role === "teacher") return next();
+  return res.status(403).json({ message: "Teacher only access" });
+};
+
+export const studentOnly = (req, res, next) => {
+  if (req.user.role === "student") return next();
+  return res.status(403).json({ message: "Student only access" });
+};

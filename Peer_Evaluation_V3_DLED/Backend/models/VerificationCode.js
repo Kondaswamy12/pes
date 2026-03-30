@@ -36,6 +36,7 @@ const verificationCodeSchema = new mongoose.Schema(
       type: Date,
       required: true,
       index: { expireAfterSeconds: 0 },
+      index: { expires: 0 },
     },
   },
   {

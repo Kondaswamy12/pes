@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.get("/my-batches", protect, getMyTABatches);
 router.get("/pending_enrollments/:batchId", protect, getPendingEnrollments);
-router.put("/accept/:enrollmentId", protect, acceptEnrollment);
+router.put("/accept/:enrollmentId", protect, acceptEnrollment );
 router.delete("/decline/:enrollmentId", protect, declineEnrollment);
 router.get("/flagged_evaluations/:batchId", protect, getFlaggedEvaluations);
 router.put(
